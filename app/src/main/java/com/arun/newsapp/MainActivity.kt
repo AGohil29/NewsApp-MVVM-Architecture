@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.arun.newsapp.databinding.ActivityMainBinding
+import com.arun.newsapp.ui.topheadline.TopHeadlineActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -26,7 +27,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun setClickListeners() {
         binding.apply {
-
+            btnHeadlines.setOnClickListener {
+                TopHeadlineActivity.start(this@MainActivity)
+            }
         }
     }
 }
