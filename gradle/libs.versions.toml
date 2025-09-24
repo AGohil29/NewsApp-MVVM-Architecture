@@ -2,7 +2,7 @@
 agp = "8.12.1"
 kotlin = "2.0.21"
 devtoolsKsp = "2.0.21-1.0.27"
-coreKtx = "1.17.0"
+coreKtx = "1.16.0"
 appcompat = "1.7.1"
 material = "1.12.0"
 activity = "1.10.1"
