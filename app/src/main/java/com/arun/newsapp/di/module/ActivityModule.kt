@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.arun.newsapp.data.repository.TopHeadlineRepository
 import com.arun.newsapp.di.ActivityContext
+import com.arun.newsapp.di.ActivityScope
 import com.arun.newsapp.ui.base.ViewModelProviderFactory
 import com.arun.newsapp.ui.topheadline.TopHeadlineAdapter
 import com.arun.newsapp.ui.topheadline.TopHeadlineViewModel
@@ -28,6 +29,7 @@ class ActivityModule(private val activity: AppCompatActivity) {
             })[TopHeadlineViewModel::class.java]
     }
 
+    @ActivityScope
     @Provides
     fun provideTopHeadlineAdapter() = TopHeadlineAdapter(ArrayList())
 }
