@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.arun.newsapp.data.repository.CountriesRepository
+import com.arun.newsapp.data.repository.NewsListRepository
 import com.arun.newsapp.data.repository.NewsSourcesRepository
 import com.arun.newsapp.data.repository.TopHeadlineRepository
 import com.arun.newsapp.di.ActivityContext
@@ -11,6 +12,7 @@ import com.arun.newsapp.di.ActivityScope
 import com.arun.newsapp.ui.base.ViewModelProviderFactory
 import com.arun.newsapp.ui.countries.CountriesAdapter
 import com.arun.newsapp.ui.countries.CountriesViewModel
+import com.arun.newsapp.ui.newslist.NewsListViewModel
 import com.arun.newsapp.ui.sources.NewsSourcesAdapter
 import com.arun.newsapp.ui.sources.NewsSourcesViewModel
 import com.arun.newsapp.ui.topheadline.TopHeadlineAdapter
@@ -28,7 +30,7 @@ class ActivityModule(private val activity: AppCompatActivity) {
     }
 
     @Provides
-    fun provideNewsListViewModel(topHeadlineRepository: TopHeadlineRepository): TopHeadlineViewModel {
+    fun provideTopHeadlineViewModel(topHeadlineRepository: TopHeadlineRepository): TopHeadlineViewModel {
         return ViewModelProvider(
             activity,
             ViewModelProviderFactory(TopHeadlineViewModel::class) {
@@ -65,4 +67,13 @@ class ActivityModule(private val activity: AppCompatActivity) {
     @ActivityScope
     @Provides
     fun provideNewsSourcesAdapter() = NewsSourcesAdapter(ArrayList())
+
+    @Provides
+    fun provideNewsListViewModel(newsListRepository: NewsListRepository): NewsListViewModel {
+        return ViewModelProvider(
+            activity,
+            ViewModelProviderFactory(NewsListViewModel::class) {
+                NewsListViewModel(newsListRepository)
+            })[NewsListViewModel::class.java]
+    }
 }

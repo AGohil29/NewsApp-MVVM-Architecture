@@ -3,11 +3,11 @@ package com.arun.newsapp.ui.topheadline
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.arun.newsapp.data.model.Article
 import com.arun.newsapp.databinding.TopHeadlineItemLayoutBinding
 import com.bumptech.glide.Glide
-import androidx.core.net.toUri
 
 class TopHeadlineAdapter(
     private val articleList: ArrayList<Article>
@@ -52,6 +52,11 @@ class TopHeadlineAdapter(
     override fun getItemCount() = articleList.size
 
     fun addData(list: List<Article>) {
+        articleList.addAll(list)
+    }
+
+    fun updateData(list: List<Article>) {
+        articleList.clear()
         articleList.addAll(list)
     }
 }

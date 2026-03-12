@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.arun.newsapp.data.model.SourceData
 import com.arun.newsapp.databinding.CountryItemLayoutBinding
+import com.arun.newsapp.ui.newslist.NewsListActivity
 
 class NewsSourcesAdapter(
     private val sourcesList: ArrayList<SourceData>
@@ -35,6 +36,10 @@ class NewsSourcesAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(sourceData: SourceData) {
             binding.countryName.text = sourceData.name
+
+            itemView.setOnClickListener {
+                NewsListActivity.start(it.context, NewsListActivity.NEWS_BY_SOURCE, sourceData.id)
+            }
         }
     }
 

@@ -34,8 +34,11 @@
         <activity
             android:name=".ui.sources.NewsSourcesActivity"
             android:exported="false"
-            android:parentActivityName=".MainActivity"
-            android:label="@string/news_sources"/>
+            android:label="@string/news_sources"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ui.newslist.NewsListActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
