@@ -107,8 +107,14 @@ class NewsListActivity : AppCompatActivity() {
     }
 
     private fun renderList(articleList: List<Article>) {
-        adapter.updateData(articleList)
-        adapter.notifyDataSetChanged()
+        if (articleList.isNotEmpty()) {
+            adapter.updateData(articleList)
+            adapter.notifyDataSetChanged()
+        } else {
+            Toast.makeText(this@NewsListActivity, "OOPS! No data found.", Toast.LENGTH_SHORT)
+                .show()
+        }
+
     }
 
     private fun injectDependencies() {
