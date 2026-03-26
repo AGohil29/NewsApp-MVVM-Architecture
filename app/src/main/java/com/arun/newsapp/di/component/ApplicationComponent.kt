@@ -7,6 +7,7 @@ import com.arun.newsapp.data.repository.CountriesRepository
 import com.arun.newsapp.data.repository.TopHeadlineRepository
 import com.arun.newsapp.di.ApplicationContext
 import com.arun.newsapp.di.module.ApplicationModule
+import com.arun.newsapp.utils.DispatcherProvider
 import dagger.Component
 import javax.inject.Singleton
 
@@ -20,6 +21,8 @@ interface ApplicationComponent {
     fun getContext(): Context
 
     fun getNetworkService(): NetworkService
+
+    fun getDispatcherProvider(): DispatcherProvider
 
     fun getTopHeadlineRepository(): TopHeadlineRepository
 

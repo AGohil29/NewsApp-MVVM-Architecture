@@ -60,6 +60,11 @@ dependencies {
     implementation(libs.browser)
 
     testImplementation(libs.junit)
+    testImplementation(libs.mockito)
+    testImplementation(libs.core.testing)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.turbine)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

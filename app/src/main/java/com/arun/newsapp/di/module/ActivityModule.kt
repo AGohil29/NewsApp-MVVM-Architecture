@@ -17,6 +17,7 @@ import com.arun.newsapp.ui.sources.NewsSourcesAdapter
 import com.arun.newsapp.ui.sources.NewsSourcesViewModel
 import com.arun.newsapp.ui.topheadline.TopHeadlineAdapter
 import com.arun.newsapp.ui.topheadline.TopHeadlineViewModel
+import com.arun.newsapp.utils.DispatcherProvider
 import dagger.Module
 import dagger.Provides
 
@@ -30,11 +31,14 @@ class ActivityModule(private val activity: AppCompatActivity) {
     }
 
     @Provides
-    fun provideTopHeadlineViewModel(topHeadlineRepository: TopHeadlineRepository): TopHeadlineViewModel {
+    fun provideTopHeadlineViewModel(
+        topHeadlineRepository: TopHeadlineRepository,
+        dispatcherProvider: DispatcherProvider
+    ): TopHeadlineViewModel {
         return ViewModelProvider(
             activity,
             ViewModelProviderFactory(TopHeadlineViewModel::class) {
-                TopHeadlineViewModel(topHeadlineRepository)
+                TopHeadlineViewModel(topHeadlineRepository, dispatcherProvider)
             })[TopHeadlineViewModel::class.java]
     }
 

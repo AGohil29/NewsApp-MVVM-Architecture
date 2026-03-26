@@ -6,6 +6,8 @@ import com.arun.newsapp.NewsApp
 import com.arun.newsapp.data.api.NetworkService
 import com.arun.newsapp.di.ApplicationContext
 import com.arun.newsapp.di.BaseUrl
+import com.arun.newsapp.utils.DefaultDispatcherProvider
+import com.arun.newsapp.utils.DispatcherProvider
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -59,4 +61,8 @@ class ApplicationModule(private val application: NewsApp) {
             .build()
             .create(NetworkService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideDispatcherProvider(): DispatcherProvider = DefaultDispatcherProvider()
 }
