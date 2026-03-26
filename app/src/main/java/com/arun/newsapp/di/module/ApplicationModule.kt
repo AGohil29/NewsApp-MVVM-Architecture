@@ -3,9 +3,13 @@ package com.arun.newsapp.di.module
 import android.content.Context
 import com.arun.newsapp.BuildConfig
 import com.arun.newsapp.NewsApp
+import com.arun.newsapp.data.api.HeaderInterceptor
 import com.arun.newsapp.data.api.NetworkService
 import com.arun.newsapp.di.ApplicationContext
 import com.arun.newsapp.di.BaseUrl
+import com.arun.newsapp.di.NetworkApiKey
+import com.arun.newsapp.di.UserAgent
+import com.arun.newsapp.utils.AppConstant
 import com.arun.newsapp.utils.DefaultDispatcherProvider
 import com.arun.newsapp.utils.DispatcherProvider
 import dagger.Module
@@ -29,13 +33,30 @@ class ApplicationModule(private val application: NewsApp) {
     @Provides
     fun provideBaseUrl(): String = "https://newsapi.org/v2/"
 
+    @NetworkApiKey
+    @Provides
+    fun provideNetworkApiKey(): String = AppConstant.API_KEY
+
+    @UserAgent
+    @Provides
+    fun provideUserAgent(): String = "ABC"
+
     @Provides
     @Singleton
     fun provideGsonConverterFactory(): GsonConverterFactory = GsonConverterFactory.create()
 
     @Provides
     @Singleton
-    fun provideOkhttpClient(): OkHttpClient {
+    fun provideHeaderInterceptor(
+        @NetworkApiKey apiKey: String,
+        @UserAgent userAgent: String,
+    ): HeaderInterceptor {
+        return HeaderInterceptor(apiKey, userAgent)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkhttpClient(headerInterceptor: HeaderInterceptor): OkHttpClient {
         val logging = HttpLoggingInterceptor().apply {
             level = if (BuildConfig.DEBUG)
                 HttpLoggingInterceptor.Level.BODY
@@ -43,6 +64,7 @@ class ApplicationModule(private val application: NewsApp) {
                 HttpLoggingInterceptor.Level.NONE
         }
         return OkHttpClient.Builder()
+            .addInterceptor(headerInterceptor)
             .addInterceptor(logging)
             .build()
     }
@@ -52,7 +74,7 @@ class ApplicationModule(private val application: NewsApp) {
     fun provideNetworkService(
         @BaseUrl baseUrl: String,
         okHttpClient: OkHttpClient,
-        gsonConverterFactory: GsonConverterFactory
+        gsonConverterFactory: GsonConverterFactory,
     ): NetworkService {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
