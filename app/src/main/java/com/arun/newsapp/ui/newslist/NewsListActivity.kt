@@ -10,39 +10,42 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.arun.newsapp.NewsApp
 import com.arun.newsapp.data.model.Article
 import com.arun.newsapp.databinding.ActivityNewsListBinding
-import com.arun.newsapp.di.component.DaggerActivityComponent
-import com.arun.newsapp.di.module.ActivityModule
 import com.arun.newsapp.ui.base.UiState
 import com.arun.newsapp.ui.topheadline.TopHeadlineAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class NewsListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNewsListBinding
 
-    @Inject
-    lateinit var viewModel: NewsListViewModel
+    private lateinit var viewModel: NewsListViewModel
 
     @Inject
     lateinit var adapter: TopHeadlineAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
         binding = ActivityNewsListBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
 
+        setUpViewModel()
         setupUI()
         setupObserver()
         fetchNews()
+    }
+
+    private fun setUpViewModel() {
+        viewModel = ViewModelProvider(this)[NewsListViewModel::class.java]
     }
 
     private fun setupUI() {
@@ -98,7 +101,8 @@ class NewsListActivity : AppCompatActivity() {
 
                         is UiState.Error -> {
                             binding.progressBar.visibility = View.GONE
-                            Toast.makeText(this@NewsListActivity, state.message, Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@NewsListActivity, state.message, Toast.LENGTH_LONG)
+                                .show()
                         }
                     }
                 }
@@ -115,14 +119,6 @@ class NewsListActivity : AppCompatActivity() {
                 .show()
         }
 
-    }
-
-    private fun injectDependencies() {
-        DaggerActivityComponent.builder()
-            .applicationComponent((application as NewsApp).applicationComponent)
-            .activityModule(ActivityModule(this))
-            .build()
-            .inject(this)
     }
 
     companion object {

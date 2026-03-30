@@ -10,24 +10,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.arun.newsapp.NewsApp
 import com.arun.newsapp.R
 import com.arun.newsapp.data.model.Country
 import com.arun.newsapp.databinding.ActivityCountriesBinding
-import com.arun.newsapp.di.component.DaggerActivityComponent
-import com.arun.newsapp.di.module.ActivityModule
 import com.arun.newsapp.ui.base.UiState
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class CountriesActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCountriesBinding
 
-    @Inject
-    lateinit var viewModel: CountriesViewModel
+    private lateinit var viewModel: CountriesViewModel
 
     @Inject
     lateinit var adapter: CountriesAdapter
@@ -39,7 +38,6 @@ class CountriesActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityCountriesBinding.inflate(layoutInflater)
@@ -50,16 +48,13 @@ class CountriesActivity : AppCompatActivity() {
             insets
         }
 
+        setUpViewModel()
         setUpUI()
         setUpObserver()
     }
 
-    private fun injectDependencies() {
-        DaggerActivityComponent.builder()
-            .applicationComponent((application as NewsApp).applicationComponent)
-            .activityModule(ActivityModule(this))
-            .build()
-            .inject(this)
+    private fun setUpViewModel() {
+        viewModel = ViewModelProvider(this)[CountriesViewModel::class.java]
     }
 
     private fun setUpUI() {
@@ -83,6 +78,7 @@ class CountriesActivity : AppCompatActivity() {
                             binding.recyclerViewCountries.visibility = View.VISIBLE
                             renderList(it.data)
                         }
+
                         is UiState.Error -> {
                             binding.recyclerViewCountries.visibility = View.GONE
                             binding.progressBar.visibility = View.GONE
