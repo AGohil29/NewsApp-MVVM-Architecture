@@ -10,22 +10,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.arun.newsapp.NewsApp
 import com.arun.newsapp.R
 import com.arun.newsapp.data.model.SourceData
 import com.arun.newsapp.databinding.ActivityNewsSourcesBinding
-import com.arun.newsapp.di.component.DaggerActivityComponent
-import com.arun.newsapp.di.module.ActivityModule
 import com.arun.newsapp.ui.base.UiState
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class NewsSourcesActivity : AppCompatActivity() {
-    @Inject
-    lateinit var newsSourcesViewModel: NewsSourcesViewModel
+    private lateinit var newsSourcesViewModel: NewsSourcesViewModel
 
     @Inject
     lateinit var newsSourcesAdapter: NewsSourcesAdapter
@@ -33,7 +32,6 @@ class NewsSourcesActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNewsSourcesBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
         binding = ActivityNewsSourcesBinding.inflate(layoutInflater)
         enableEdgeToEdge()
@@ -52,8 +50,13 @@ class NewsSourcesActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
+        setUpViewModel()
         setUpUI()
         setupObserver()
+    }
+
+    private fun setUpViewModel() {
+        newsSourcesViewModel = ViewModelProvider(this)[NewsSourcesViewModel::class.java]
     }
 
     private fun setUpUI() {
@@ -92,14 +95,6 @@ class NewsSourcesActivity : AppCompatActivity() {
     private fun renderList(data: List<SourceData>) {
         newsSourcesAdapter.addData(data)
         newsSourcesAdapter.notifyDataSetChanged()
-    }
-
-    private fun injectDependencies() {
-        DaggerActivityComponent.builder()
-            .applicationComponent((application as NewsApp).applicationComponent)
-            .activityModule(ActivityModule(this))
-            .build()
-            .inject(this)
     }
 
     companion object {
