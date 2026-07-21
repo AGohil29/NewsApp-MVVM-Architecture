@@ -6,6 +6,7 @@ import com.arun.newsapp.data.model.Article
 import com.arun.newsapp.data.repository.NewsListRepository
 import com.arun.newsapp.ui.base.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -20,8 +21,13 @@ class NewsListViewModel @Inject constructor(
 
     val uiState: StateFlow<UiState<List<Article>>> = _uiState
 
+    private var fetchNewsBySourcesJob: Job? = null
+    private var fetchNewsByCountryJob: Job? = null
+
     fun fetchNewsBySources(source: String) {
-        viewModelScope.launch {
+        fetchNewsBySourcesJob?.cancel()
+        _uiState.value = UiState.Loading
+        fetchNewsBySourcesJob = viewModelScope.launch {
             newsListRepository.getNewsBySources(source)
                 .catch { e ->
                     _uiState.value = UiState.Error(e.toString())
@@ -32,7 +38,9 @@ class NewsListViewModel @Inject constructor(
     }
 
     fun fetchNewsByCountry(country: String) {
-        viewModelScope.launch {
+        fetchNewsByCountryJob?.cancel()
+        _uiState.value = UiState.Loading
+        fetchNewsByCountryJob = viewModelScope.launch {
             newsListRepository.getNewsByCountry(country)
                 .catch { e ->
                     _uiState.value = UiState.Error(e.toString())

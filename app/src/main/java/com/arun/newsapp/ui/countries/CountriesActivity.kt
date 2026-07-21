@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -61,6 +60,9 @@ class CountriesActivity : AppCompatActivity() {
         val recyclerView = binding.recyclerViewCountries
         recyclerView.layoutManager = LinearLayoutManager(this@CountriesActivity)
         recyclerView.adapter = adapter
+        binding.noDataView.buttonTryAgain.setOnClickListener {
+            viewModel.retryFetchCountries()
+        }
     }
 
     private fun setUpObserver() {
@@ -70,11 +72,13 @@ class CountriesActivity : AppCompatActivity() {
                     when (it) {
                         UiState.Loading -> {
                             binding.recyclerViewCountries.visibility = View.GONE
+                            binding.noDataView.root.visibility = View.GONE
                             binding.progressBar.visibility = View.VISIBLE
                         }
 
                         is UiState.Success -> {
                             binding.progressBar.visibility = View.GONE
+                            binding.noDataView.root.visibility = View.GONE
                             binding.recyclerViewCountries.visibility = View.VISIBLE
                             renderList(it.data)
                         }
@@ -82,8 +86,9 @@ class CountriesActivity : AppCompatActivity() {
                         is UiState.Error -> {
                             binding.recyclerViewCountries.visibility = View.GONE
                             binding.progressBar.visibility = View.GONE
-                            Toast.makeText(this@CountriesActivity, it.message, Toast.LENGTH_LONG)
-                                .show()
+                            binding.noDataView.textViewNoDataMessage.text =
+                                it.message.ifBlank { getString(R.string.no_data_error_message) }
+                            binding.noDataView.root.visibility = View.VISIBLE
                         }
                     }
                 }

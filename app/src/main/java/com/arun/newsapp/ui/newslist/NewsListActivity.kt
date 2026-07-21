@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.arun.newsapp.R
 import com.arun.newsapp.data.model.Article
 import com.arun.newsapp.databinding.ActivityNewsListBinding
 import com.arun.newsapp.ui.base.UiState
@@ -32,11 +33,17 @@ class NewsListActivity : AppCompatActivity() {
     @Inject
     lateinit var adapter: TopHeadlineAdapter
 
+    private var newsBy = ""
+    private var newsByValue = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNewsListBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
+
+        newsBy = intent.getStringExtra(NEWS_BY_KEY) ?: ""
+        newsByValue = intent.getStringExtra(NEWS_BY_VALUE_KEY) ?: ""
 
         setUpViewModel()
         setupUI()
@@ -70,12 +77,13 @@ class NewsListActivity : AppCompatActivity() {
             )
             adapter = this@NewsListActivity.adapter
         }
+
+        binding.noDataView.buttonTryAgain.setOnClickListener {
+            fetchNews()
+        }
     }
 
     private fun fetchNews() {
-        val newsBy = intent.getStringExtra(NEWS_BY_KEY)
-        val newsByValue = intent.getStringExtra(NEWS_BY_VALUE_KEY) ?: ""
-
         when (newsBy) {
             NEWS_BY_COUNTRY -> viewModel.fetchNewsByCountry(newsByValue)
             NEWS_BY_SOURCE -> viewModel.fetchNewsBySources(newsByValue)
@@ -90,19 +98,22 @@ class NewsListActivity : AppCompatActivity() {
                     when (state) {
                         is UiState.Loading -> {
                             binding.progressBar.visibility = View.VISIBLE
+                            binding.noDataView.root.visibility = View.GONE
                             binding.recyclerView.visibility = View.GONE
                         }
 
                         is UiState.Success -> {
                             binding.progressBar.visibility = View.GONE
+                            binding.noDataView.root.visibility = View.GONE
                             renderList(state.data)
                             binding.recyclerView.visibility = View.VISIBLE
                         }
 
                         is UiState.Error -> {
                             binding.progressBar.visibility = View.GONE
-                            Toast.makeText(this@NewsListActivity, state.message, Toast.LENGTH_LONG)
-                                .show()
+                            binding.noDataView.textViewNoDataMessage.text =
+                                state.message.ifBlank { getString(R.string.no_data_error_message) }
+                            binding.noDataView.root.visibility = View.VISIBLE
                         }
                     }
                 }
@@ -115,8 +126,8 @@ class NewsListActivity : AppCompatActivity() {
             adapter.updateData(articleList)
             adapter.notifyDataSetChanged()
         } else {
-            Toast.makeText(this@NewsListActivity, "OOPS! No data found.", Toast.LENGTH_SHORT)
-                .show()
+            binding.noDataView.textViewNoDataMessage.text = getString(R.string.no_data_error_message)
+            binding.noDataView.root.visibility = View.VISIBLE
         }
 
     }
