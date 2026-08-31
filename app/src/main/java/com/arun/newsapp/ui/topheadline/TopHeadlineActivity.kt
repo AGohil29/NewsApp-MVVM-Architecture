@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.arun.newsapp.R
 import com.arun.newsapp.data.model.Article
 import com.arun.newsapp.databinding.ActivityTopHeadlineBinding
 import com.arun.newsapp.ui.base.UiState
@@ -62,6 +63,9 @@ class TopHeadlineActivity : AppCompatActivity() {
             )
             adapter = this@TopHeadlineActivity.adapter
         }
+        binding.noDataView.buttonTryAgain.setOnClickListener {
+            newsListViewModel.fetchNews()
+        }
     }
 
     private fun setupObserver() {
@@ -71,18 +75,22 @@ class TopHeadlineActivity : AppCompatActivity() {
                     when (it) {
                         is UiState.Success -> {
                             binding.progressBar.visibility = View.GONE
+                            binding.noDataView.root.visibility = View.GONE
                             renderList(it.data)
                             binding.recyclerView.visibility = View.VISIBLE
                         }
 
                         is UiState.Error -> {
                             binding.progressBar.visibility = View.GONE
-                            Toast.makeText(this@TopHeadlineActivity, it.message, Toast.LENGTH_LONG)
-                                .show()
+                            binding.recyclerView.visibility = View.GONE
+                            binding.noDataView.textViewNoDataMessage.text =
+                                it.message.ifBlank { getString(R.string.no_data_error_message) }
+                            binding.noDataView.root.visibility = View.VISIBLE
                         }
 
                         is UiState.Loading -> {
                             binding.progressBar.visibility = View.VISIBLE
+                            binding.noDataView.root.visibility = View.GONE
                             binding.recyclerView.visibility = View.GONE
                         }
                     }

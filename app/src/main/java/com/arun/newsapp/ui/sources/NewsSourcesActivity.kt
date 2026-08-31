@@ -63,6 +63,9 @@ class NewsSourcesActivity : AppCompatActivity() {
         val recyclerView = binding.recyclerViewSources
         recyclerView.layoutManager = LinearLayoutManager(this@NewsSourcesActivity)
         recyclerView.adapter = newsSourcesAdapter
+        binding.noDataView.buttonTryAgain.setOnClickListener {
+            newsSourcesViewModel.fetchNewsSources()
+        }
     }
 
     private fun setupObserver() {
@@ -72,19 +75,23 @@ class NewsSourcesActivity : AppCompatActivity() {
                     when (it) {
                         UiState.Loading -> {
                             binding.progressBar.visibility = View.VISIBLE
+                            binding.noDataView.root.visibility = View.GONE
                             binding.recyclerViewSources.visibility = View.GONE
                         }
 
                         is UiState.Success -> {
                             binding.progressBar.visibility = View.GONE
+                            binding.noDataView.root.visibility = View.GONE
                             binding.recyclerViewSources.visibility = View.VISIBLE
                             renderList(it.data)
                         }
 
                         is UiState.Error -> {
                             binding.progressBar.visibility = View.GONE
-                            Toast.makeText(this@NewsSourcesActivity, it.message, Toast.LENGTH_LONG)
-                                .show()
+                            binding.recyclerViewSources.visibility = View.GONE
+                            binding.noDataView.textViewNoDataMessage.text =
+                                it.message.ifBlank { getString(R.string.no_data_error_message) }
+                            binding.noDataView.root.visibility = View.VISIBLE
                         }
                     }
                 }

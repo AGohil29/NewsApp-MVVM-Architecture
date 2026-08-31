@@ -61,14 +61,14 @@ class CountriesActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this@CountriesActivity)
         recyclerView.adapter = adapter
         binding.noDataView.buttonTryAgain.setOnClickListener {
-            viewModel.retryFetchCountries()
+            viewModel.fetchCountries()
         }
     }
 
     private fun setUpObserver() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.countries.collect {
+                viewModel.uiState.collect {
                     when (it) {
                         UiState.Loading -> {
                             binding.recyclerViewCountries.visibility = View.GONE

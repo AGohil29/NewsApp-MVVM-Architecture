@@ -29,7 +29,8 @@ class TopHeadlineViewModel @Inject constructor(
         fetchNews()
     }
 
-    private fun fetchNews() {
+    fun fetchNews() {
+        _uiState.value = UiState.Loading
         viewModelScope.launch(dispatcherProvider.main) {
             topHeadlineRepository.getTopHeadlines(COUNTRY)
                 .flowOn(dispatcherProvider.io)

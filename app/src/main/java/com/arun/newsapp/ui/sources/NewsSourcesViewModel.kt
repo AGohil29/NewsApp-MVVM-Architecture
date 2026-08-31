@@ -5,16 +5,19 @@ import androidx.lifecycle.viewModelScope
 import com.arun.newsapp.data.model.SourceData
 import com.arun.newsapp.data.repository.NewsSourcesRepository
 import com.arun.newsapp.ui.base.UiState
+import com.arun.newsapp.utils.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class NewsSourcesViewModel @Inject constructor(
     private val newsSourcesRepository: NewsSourcesRepository,
+    private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<List<SourceData>>>(UiState.Loading)
 
@@ -24,9 +27,11 @@ class NewsSourcesViewModel @Inject constructor(
         fetchNewsSources()
     }
 
-    private fun fetchNewsSources() {
-        viewModelScope.launch {
+    fun fetchNewsSources() {
+        _uiState.value = UiState.Loading
+        viewModelScope.launch(dispatcherProvider.main) {
             newsSourcesRepository.getNewsSources()
+                .flowOn(dispatcherProvider.io)
                 .catch { e ->
                     _uiState.value = UiState.Error(e.toString())
                 }.collect {

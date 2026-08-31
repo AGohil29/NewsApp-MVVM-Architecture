@@ -5,42 +5,41 @@ import androidx.lifecycle.viewModelScope
 import com.arun.newsapp.data.model.Country
 import com.arun.newsapp.data.repository.CountriesRepository
 import com.arun.newsapp.ui.base.UiState
+import com.arun.newsapp.utils.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CountriesViewModel @Inject constructor(
     private val countriesRepository: CountriesRepository,
+    private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
-    private val _countries = MutableStateFlow<UiState<List<Country>>>(UiState.Loading)
+    private val _uiState = MutableStateFlow<UiState<List<Country>>>(UiState.Loading)
     private var fetchCountriesJob: Job? = null
 
-    val countries: StateFlow<UiState<List<Country>>> = _countries
+    val uiState: StateFlow<UiState<List<Country>>> = _uiState
 
     init {
         fetchCountries()
     }
 
-    fun retryFetchCountries() {
-        _countries.value = UiState.Loading
-        fetchCountries()
-    }
-
-    private fun fetchCountries() {
+    fun fetchCountries() {
         fetchCountriesJob?.cancel()
-        fetchCountriesJob = viewModelScope.launch {
+        fetchCountriesJob = viewModelScope.launch(dispatcherProvider.main) {
             countriesRepository.getCountries()
+                .flowOn(dispatcherProvider.io)
                 .catch { e ->
-                    _countries.value = UiState.Error(e.message ?: e.toString())
+                    _uiState.value = UiState.Error(e.toString())
                 }
                 .collect {
-                    _countries.value = UiState.Success(it)
+                    _uiState.value = UiState.Success(it)
                 }
         }
     }
