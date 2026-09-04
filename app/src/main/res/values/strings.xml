@@ -2,6 +2,7 @@
     <string name="app_name">NewsApp-MVVM-Architecture</string>
     <string name="news_sources">News Sources</string>
     <string name="countries">Countries</string>
+    <string name="languages">Languages</string>
     <string name="oops_title">Ooops,</string>
     <string name="no_data_error_message">Something went wrong. Let\'s try one more again</string>
     <string name="try_again">TRY AGAIN</string>

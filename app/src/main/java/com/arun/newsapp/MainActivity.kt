@@ -7,6 +7,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.arun.newsapp.databinding.ActivityMainBinding
 import com.arun.newsapp.ui.countries.CountriesActivity
+import com.arun.newsapp.ui.languages.LanguagesActivity
 import com.arun.newsapp.ui.sources.NewsSourcesActivity
 import com.arun.newsapp.ui.topheadline.TopHeadlineActivity
 
@@ -40,6 +41,8 @@ class MainActivity : AppCompatActivity() {
             btnSources.setOnClickListener {
                 NewsSourcesActivity.start(this@MainActivity)
             }
+
+            btnLanguages.setOnClickListener { LanguagesActivity.start(this@MainActivity) }
         }
     }
 }

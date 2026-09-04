@@ -1,6 +1,7 @@
 package com.arun.newsapp.utils
 
 import com.arun.newsapp.data.model.Country
+import com.arun.newsapp.data.model.Language
 
 object AppConstant {
     const val API_KEY = "1b21f9275e1b441d841b092b13a3cf92"
@@ -61,5 +62,22 @@ object AppConstant {
         Country("us", "United States"),
         Country("ve", "Venezuela"),
         Country("za", "South Africa")
+    )
+
+    val LANGUAGES = listOf(
+        Language("ar", "Arabic"),
+        Language("de", "German"),
+        Language("en", "English"),
+        Language("es", "Spanish"),
+        Language("fr", "French"),
+        Language("hi", "Hindi"),
+        Language("it", "Italian"),
+        Language("nl", "Dutch"),
+        Language("no", "Norwegian"),
+        Language("pt", "Portuguese"),
+        Language("ru", "Russian"),
+        Language("se", "Swedish"),
+        Language("ud", "Urdu"),
+        Language("zh", "Chinese")
     )
 }
