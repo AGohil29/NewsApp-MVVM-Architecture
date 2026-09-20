@@ -36,6 +36,10 @@
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         <activity
+            android:name=".ui.search.SearchActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        <activity
             android:name=".ui.sources.NewsSourcesActivity"
             android:exported="false"
             android:label="@string/news_sources"

@@ -6,6 +6,8 @@ import com.arun.newsapp.data.model.Language
 object AppConstant {
     const val API_KEY = "1b21f9275e1b441d841b092b13a3cf92"
     const val COUNTRY = "us"
+    const val DEBOUNCE_TIMEOUT = 300L
+    const val MIN_SEARCH_CHAR = 3
 
     val COUNTRIES = listOf(
         Country("ae", "United Arab Emirates"),
